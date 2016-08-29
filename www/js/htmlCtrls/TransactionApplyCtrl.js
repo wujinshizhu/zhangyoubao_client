@@ -12,7 +12,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
     var status = {
       apply: 1,
       view_apply: 2,
-      confirmed: 3,
+      accepted: 3,
       rejected: 4
     };
     $scope.curr_status = status.apply;
@@ -29,7 +29,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
 
     // 一旦交易成功后, 将可以看到用户所有的身份信息
     function hidePartInfo() {
-        if($scope.curr_status != status.confirmed) {
+        if($scope.curr_status != status.accepted) {
             $scope.idNumHidden = $scope.applyUserInfo.id_num.substring(0,$scope.applyUserInfo.id_num.length - 4);
             $scope.idNumHidden += '****';
             console.log($scope.idNumHidden);
@@ -40,6 +40,9 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
     }
 
     function getTransactionInfo(chat_id){
+        $ionicLoading.show({
+          templateUrl: 'templates/loading.html'
+        });
         var $url='https://'+$rootScope.SERVER_ADDRESS+'/'+$rootScope.ENTER_FILE+'/User/Transaction/getTransactionInfoByChatId';
         angular.toJson($data);
         $http({
@@ -64,10 +67,10 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
                 if($scope.applyInfo.transaction_type){
                   $scope.applyInfo.transaction_type = Number($scope.applyInfo.transaction_type);
                   if($scope.applyInfo.transaction_type == $rootScope.TRANS_TYPE.GOODS_FIRST){
-                    $scope.applyInfo.transaction_type_name = '先款后货';
+                    $scope.applyInfo.transaction_type_name = '先货后款';
                   }
                   else{
-                    $scope.applyInfo.transaction_type_name = '先货后款';
+                    $scope.applyInfo.transaction_type_name = '先款后货';
                   }
                 }
               }
@@ -83,6 +86,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
               $scope.storeInfo = data.storeInfo;
               break;
           }
+          $ionicLoading.hide();
         }).
         error(function(data, status, headers, config)
         {
@@ -94,7 +98,28 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
                 ExceptionService.defaultError();
                 break;
           }
+          $ionicLoading.hide();
         });
+    }
+
+    function getTransactionInfoByChatId(chat_id, msg_index){
+        if(chat_id && msg_index) {
+          // 获取申请的用户信息
+          var msg = ChatCacheService.getSystemMsgByIndex(msg_index);
+          if(msg.type == $rootScope.MSG_TYPE.APPLICATION || msg.type == $rootScope.MSG_TYPE.APPLY_ACCEPTED)
+          {
+            // 从服务器后台获取交易申请信息, 同时需要包括具体商品的信息, 用户信息, 用户实体店信息等
+            getTransactionInfo(chat_id);
+          }
+          else
+          {
+            ExceptionService.paramsError();
+          }
+
+        }
+        else{
+          ExceptionService.paramsError();
+        }
     }
 
 
@@ -104,6 +129,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
     // 提取当前用户的个人信息并填充进页面
     switch($scope.curr_status){
         case status.apply:
+            $scope.title = '<B>交易申请(申请中)</B>';
             $scope.applyUserInfo = $rootScope.userInfo;
             if($scope.applyUserInfo.level == $rootScope.USER_LEVEL.STORE_OWNER){
               $scope.storeInfo = $rootScope.storeInfo
@@ -125,23 +151,12 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
             };
             break;
         case status.view_apply:
-            if(chat_id && msg_index) {
-                // 获取申请的用户信息
-                var msg = ChatCacheService.getSystemMsgByIndex(msg_index);
-                if(msg.type == $rootScope.MSG_TYPE.APPLICATION)
-                {
-                    // 从服务器后台获取交易申请信息, 同时需要包括具体商品的信息, 用户信息, 用户实体店信息等
-                    getTransactionInfo(chat_id);
-                }
-                else
-                {
-                    ExceptionService.paramsError();
-                }
-
-            }
-            else{
-                ExceptionService.paramsError();
-            }
+            $scope.title = '<B>交易申请(待确认)</B>';
+            getTransactionInfoByChatId(chat_id,msg_index);
+            break;
+        case status.accepted:
+            $scope.title = '<B>交易申请(已确认)</B>';
+            getTransactionInfoByChatId(chat_id,msg_index);
             break;
         default:
             break;

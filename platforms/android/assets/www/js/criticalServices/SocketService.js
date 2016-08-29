@@ -254,9 +254,7 @@ rootService.factory('SocketService',function(socketFactory,$rootScope,ChatCacheS
         target_id: content.receive_user_id,
         src_id: $rootScope.userInfo.user_id,
         msg_create_time_local: currTime,
-        userNameRespect: $rootScope.userInfo.userNameRespect, //发送方的尊称
-        avatars_name: $rootScope.userInfo.avatars_name, //发送方的头像
-        src_level: $rootScope.userInfo.level //发送方的用户权限等级
+        userNameRespect: $rootScope.userInfo.userNameRespect //发送方的尊称
       };
       console.log("发送的交易申请");
       console.log(msg);
@@ -268,6 +266,7 @@ rootService.factory('SocketService',function(socketFactory,$rootScope,ChatCacheS
     }
 
     function sendTransactionAccepted(apply){
+        var currTime = $rootScope.getNowFormatDate();
         var msg = {
           trans_id: apply.id,
           receive_user_id: $rootScope.userInfo.user_id,
@@ -275,9 +274,7 @@ rootService.factory('SocketService',function(socketFactory,$rootScope,ChatCacheS
           status: apply.status,
           type: $rootScope.MSG_TYPE.APPLY_ACCEPTED,
           msg_create_time_local: currTime,
-          userNameRespect: $rootScope.userInfo.userNameRespect, //发送方的尊称
-          avatars_name: $rootScope.userInfo.avatars_name, //发送方的头像
-          src_level: $rootScope.userInfo.level //发送方的用户权限等级
+          userNameRespect: $rootScope.userInfo.userNameRespect //发送方的尊称
         };
         console.log("发送的交易确认");
         console.log(msg);

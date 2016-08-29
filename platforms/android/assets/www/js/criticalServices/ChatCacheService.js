@@ -178,6 +178,7 @@ rootModule.factory('ChatCacheService',function(LocalStorage,$rootScope,$ionicHis
       }
       else{
         delete chatCache.chatDic[$rootScope.SYSTEM_MSG_ID];
+        updateChatOrderListOnDelete($rootScope.SYSTEM_MSG_ID);
       }
       updateUnReadMsgNumber();
       saveChatDic($rootScope.userInfo.user_id);
