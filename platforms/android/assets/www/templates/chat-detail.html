@@ -1,0 +1,116 @@
+<!--
+  This template loads for the 'tab.friend-detail' state (app.js)
+  'friend' is a $scope variable created in the FriendsCtrl controller (controllers.js)
+  The FriendsCtrl pulls data from the Friends service (service.js)
+  The Friends service returns an array of friend data
+-->
+<ion-view view-title="{{chatUserInfo.userNameRespect}}" class="light-bg">
+
+  <ion-nav-buttons side="left">
+    <!--如何在tempalte中使用rootScope的经典例子-->
+    <a class="button button-clear icon ion-ios-arrow-back" ng-click="$root.goBack()"></a>
+  </ion-nav-buttons>
+
+  <ion-nav-buttons side="right">
+      <!--如何在tempalte中使用rootScope的经典例子-->
+      <a class="button button-clear icon ion-person"></a>
+  </ion-nav-buttons>
+  <ion-content class="padding " overflow-scroll="false">
+
+
+      <ion-item style="padding: 8px 0;" ng-if="!isConnected">
+          <div  style="text-align: center">
+              <i class="icon ion-alert-circled icon-accessory energized" style="font-size: 24px;"></i>
+              <i style="font-size: 14px;color: #64252F; margin-left: 10px; position: relative; bottom: 3px">网络异常，暂时无法连接到服务器</i>
+          </div>
+      </ion-item>
+
+
+          <ion-refresher
+                  pulling-text="下拉获取更多历史记录..."
+                  on-refresh="getMoreChatRecord()"
+                  spinner="android">
+          </ion-refresher>
+
+
+      <div ng-if="chatDetail.chatRecords.length==0" style="text-align: center">
+
+            <span class="stable-bg tip" style="padding: 4px;">您正在开始新的私信</span>
+
+      </div>
+      <!--此处collection-repeat不好用，其需要每一个重复项都是固定的高度，在这儿无法达到-->
+      <div ng-if="chatShowList.length!=0">
+          <div ng-repeat="item in chatShowList track by $index">
+
+              <div ng-if="needToShowTime[$index]!=0" style="text-align: center">
+                  <span class="stable-bg tip" style="padding: 4px;" ng-if="needToShowTime[$index]==1">{{item.msg_create_time}}</span>
+                  <span class="stable-bg tip" style="padding: 4px;" ng-if="needToShowTime[$index]==2">{{item.msg_create_time.substr(11,8)}}</span>
+              </div>
+
+
+              <div class="leftd clear-auto" ng-if="item.src_id !=$root.userInfo.user_id">
+                  <div class="leftimg">
+                      <img ng-src="{{chatUserInfo.avatars_name}}"/>
+                  </div>
+                  <div class="speech left" ng-if="item.type==$root.MSG_TYPE.TEXT"> {{item.content}}
+                  </div>
+                  <div class="chat_img" ng-if="item.type==$root.MSG_TYPE.IMG" ng-click="onClickImg(item.origin)">
+                      <img class="left img_height_bigger" ng-src="{{item.thumbnail}}" ng-if="item.thumbnail_width<=item.thumbnail_height">
+                      <img class="left img_width_bigger" ng-src="{{item.thumbnail}}" ng-if="item.thumbnail_width>item.thumbnail_height">
+                  </div>
+              </div>
+              <div class="rightd clear-auto" ng-if="item.src_id ==$root.userInfo.user_id">
+                  <div class="rightimg">
+                      <img ng-src="{{$root.userInfo.avatars_name}}"/>
+                  </div>
+                  <div class="speech right" ng-if="item.type==$root.MSG_TYPE.TEXT"> {{item.content}}
+                  </div>
+
+                  <div class="chat_img" ng-if="item.type==$root.MSG_TYPE.IMG" ng-click="onClickImg(item.origin)">
+                      <img class="right img_height_bigger" ng-src="{{item.thumbnail}}" ng-if="item.thumbnail_width<=item.thumbnail_height">
+                      <img class="right img_width_bigger" ng-src="{{item.thumbnail}}" ng-if="item.thumbnail_width>item.thumbnail_height">
+                  </div>
+                  <div class="sending" ng-if="item.send_state==$root.MSG_SEND_STATE.WAITING_RESULT">
+                     <ion-spinner></ion-spinner>
+                  </div>
+
+                  <div class="failed" ng-if="item.send_state==$root.MSG_SEND_STATE.FAILED">
+                      <i class="icon ion-ios-refresh assertive" ng-click="onClickFailed($index)"></i>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+
+      <!-- 原本最后一个元素在scroll中无法下拉到，添加该clear后问题顺利解决
+      原理: 只有当clear时，上文的float才全部计算完成，这个时候父元素中scroll才能计算出真正的垂直方向的长度，
+      从而可以scroll到，所以对应float的子元素，一定记得要clear
+      http://blog.sina.com.cn/s/blog_709475a10100wkdj.html  第四个问题
+      -->
+      <!--<div class="clear"></div>-->
+
+
+      <!--<img ng-repeat="image in images" ng-src="{{urlForImage(image)}}" height="200px"/>-->
+      <!--<img ng-show="imgURI !== undefined" ng-src="{{imgURI}}">-->
+
+      <!--<ion-scroll direction="x" style="height:200px; min-height: 200px; overflow: scroll; white-space: nowrap;">-->
+          <!--<img ng-repeat="image in chatImages" ng-src="{{urlForImage(image.url)}}" style="height:200px; padding: 5px 5px 5px 5px;"/>-->
+      <!--</ion-scroll>-->
+
+  </ion-content>
+
+    <!-- 底部的输入框 -->
+  <ion-footer-bar class="bar-stable">
+
+      <div class="item-input-wrapper light-bg">
+          <span class="icon ion-compose placeholder-icon" style="font-size: 28px; color: #666666"></span>
+          <input type="text" placeholder="请输入聊天内容" ng-model="chatStr" ng-click="toBottom()" maxlength="200">
+      </div>
+
+      <div>
+          <button class="button button-icon icon ion-ios-plus-outline" ng-if="!hasContent" ng-click="showActionSheet( )" style="font-size: 20px;"></button>
+          <button class="button button-positive"  ng-if="hasContent" ng-click="sendMessage(chatStr)">发送</button>
+      </div>
+  </ion-footer-bar>
+
+</ion-view>

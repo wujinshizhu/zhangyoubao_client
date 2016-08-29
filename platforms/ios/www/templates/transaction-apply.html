@@ -1,0 +1,196 @@
+<ion-view view-title="交易申请" cache-view="false" hide-nav-bar="false">
+  <ion-nav-buttons side="left">
+    <!--如何在tempalte中使用rootScope的经典例子-->
+    <a class="button button-clear icon ion-ios-arrow-back" ng-click="$root.goBack()"></a>
+  </ion-nav-buttons>
+  <ion-content class="padding has-footer">
+    <div class="list-inset tip">
+        建议您通过私信或电话与对方协商一致后再提出申请(为了您的交易安全, 请使用私信协商或者保存通话录音)
+    </div>
+
+    <div class="card">
+      <label class="item item-divider positive text_bold">
+         挂单信息
+      </label>
+
+      <a class="item item-thumbnail-left no_border">
+        <img ng-src="{{tradeApplyInfo.thumbnail_name}}" ng-if="tradeApplyInfo.thumbnail_name!=null">
+        <img ng-src="img/logo.png" ng-if="tradeApplyInfo.thumbnail_name==null">
+        <div class="ellipsis commodity">
+          <div>
+            <p>
+              <i class="positive trade-type" ng-if="tradeApplyInfo.trade_type == 0">【出售】</i>
+              <i class="energized trade-type" ng-if="tradeApplyInfo.trade_type == 1">【收购】</i>
+              <i  class="item-title">{{tradeApplyInfo.trade_title}}</i>
+            </p>
+          </div>
+        </div>
+
+        <div class="tip" ng-if="tradeApplyInfo.store_id!=null">
+          商铺认证
+          <i class="icon ion-checkmark-circled positive"></i>
+
+        </div>
+
+        <div class="tip" ng-if="tradeApplyInfo.store_id==null">
+          个人认证
+          <i class="icon ion-checkmark-circled positive"></i>
+
+        </div>
+
+        <div class="tip" >
+          {{tradeApplyInfo.trade_visit_num}}次浏览
+          <i class="item-time">{{tradeApplyInfo.create_time}}</i>
+        </div>
+
+      </a>
+
+    </div>
+
+    <div class="card">
+      <label class="item item-divider positive text_bold">
+        申请人信息
+        <span ng-if="tradeApplyInfo.trade_type == 0">(买方)</span>
+        <span ng-if="tradeApplyInfo.trade_type == 1">(卖方)</span>
+      </label>
+
+      <label class="item item-input" >
+        <div class="input-label">
+            姓名:
+        </div>
+        <i>{{applyUserInfo.name}}</i>
+      </label>
+
+      <label class="item item-input" >
+        <div class="input-label">
+            性别:
+        </div>
+        <i>{{applyUserInfo.sex}}</i>
+      </label>
+
+      <!--测试一下长地址换行的问题,不行就改为area -->
+      <label class="item item-input" >
+        <div class="input-label">
+            地址:
+        </div>
+        <i style="white-space: normal; width: 60%;">{{applyUserInfo.address}}</i>
+        <!--<textarea type ="text" ng-model="applyUserInfo.address" readonly="readonly"></textarea>-->
+      </label>
+
+      <label class="item item-input" >
+        <div class="input-label">
+            身份证:
+        </div>
+        <i>{{idNumHidden}}</i>
+      </label>
+    </div>
+
+    <!-- 该项信息仅实体店主拥有-->
+    <div class="card" ng-if="storeInfo">
+      <label class="item item-divider positive text_bold">
+        实体店信息
+      </label>
+      <label class="item item-input" >
+        <div class="input-label">
+          店铺名称:
+        </div>
+        <input type ="text" ng-model="storeInfo.store_name" readonly="readonly">
+      </label>
+
+      <label class="item item-input" >
+        <div class="input-label">
+          地址:
+        </div>
+        <textarea type ="text" ng-model="storeInfo.store_address" readonly="readonly"></textarea>
+      </label>
+    </div>
+    <div class="list-inset tip">
+      为了提高交易申请的有效性,请详细填写"申请描述",包括商品的名称/类型/品相/交易价格/交易数量/交易方式等
+    </div>
+    <div class="card">
+      <label class="item item-divider positive text_bold">
+        交易申请
+      </label>
+
+      <!--<label class="item item-input">-->
+        <!--<div class="input-label">-->
+          <!--申请描述:-->
+        <!--</div>-->
+
+      <!--</label>-->
+      <!--先货后款,先款后货-->
+      <label class="item item-input item-select" ng-if="curr_status==1">
+        <div class="input-label">
+          交易类型:
+        </div>
+        <select style="position: relative" ng-model="applyInfo.transaction_type"
+                ng-options="type.value as type.name for type in transactionTypes">
+        </select>
+      </label>
+
+      <label class="item item-input" ng-if="curr_status!=1">
+        <div class="input-label">
+          交易类型:
+        </div>
+        <i>{{applyInfo.transaction_type_name}}</i>
+      </label>
+      <!--可选,和冯哥确认后再说 -->
+      <label class="item item-input" >
+        <div class="input-label">
+          交易金额:
+        </div>
+        <input type ="number" ng-model="applyInfo.money" ng-if="curr_status==1">
+        <i ng-if="curr_status!=1">{{applyInfo.money}}</i>
+      </label>
+      <label class="item-input ">
+        <span class="input-label">申请描述:</span>
+      </label>
+      <!-- 使用textarea是为了方便地址过长的时候进行修改-->
+      <label class="item item-input no_border_top" ng-if="curr_status==1">
+        <textarea type ="text"  ng-model="applyInfo.apply_description" placeholder="请输入您交易申请的具体描述,限255个字" maxlength="255"></textarea>
+      </label>
+      <label class="item item-input no_border_top" ng-if="curr_status!=1">
+        <p style="white-space: normal">{{applyInfo.apply_description}}</p>
+      </label>
+
+
+    </div>
+
+    <div class="list-inset" ng-if="curr_status==1">
+      <button class="button button-full button-positive" ng-click="onSubmit()">
+        <B>确认申请</B>
+      </button>
+      <button class="button button-full button-assertive" ng-click="onCancel()">
+        <B>取消</B>
+      </button>
+    </div>
+
+    <div class="list-inset" ng-if="curr_status==2">
+      <button class="button button-full button-positive" ng-click="onSubmit()">
+        <B>同意交易</B>
+      </button>
+      <button class="button button-full button-assertive" ng-click="onCancel()">
+        <B>拒绝交易</B>
+      </button>
+    </div>
+  </ion-content>
+
+  <!-- 底部的菜单栏 -->
+  <ion-footer-bar class="bar-light" ng-if="curr_status==2">
+
+    <div class="row no_padding">
+
+      <div class="button button-positive col-40"  ng-click="onClickChat()" style="margin: 0 5%">
+        <i class="icon ion-android-chat"></i>
+        <i style="font-size: 16px;font-weight: bold">私信</i>
+      </div>
+
+      <a href="tel: {{applyUserInfo.phone}}" class="button button-positive icon_phone_no_margin_top col-40" style="margin: 0 4%">
+        <i class="icon ion-ios-telephone"></i>
+        <i  style="font-size: 16px;font-weight: bold">电话</i>
+      </a>
+
+    </div>
+
+  </ion-footer-bar>
+</ion-view>

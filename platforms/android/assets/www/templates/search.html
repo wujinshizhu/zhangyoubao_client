@@ -1,0 +1,130 @@
+<ion-view view-title="搜索" >
+    <!--<ion-nav-title class="item-input-inset input_search">-->
+        <!--<label class="item-input-wrapper light-bg" focus-me>-->
+            <!--<i class="icon ion-ios-search placeholder-icon"></i>-->
+            <!--<input type="text"  placeholder="搜索挂单、店铺" ng-click="search_click()" ng-model="searchKey" style="background-color: #ffffff">-->
+        <!--</label>-->
+    <!--</ion-nav-title>-->
+
+
+    <ion-nav-title class="item-input-inset input_search">
+        <!--<img ng-src="img/search2.png" width="100%" height="100%" />-->
+        <div class="item-input-wrapper light-bg">
+            <select class=" no_border light-bg" ng-model="query.type"
+                    ng-options="type.id as type.name for type in query_type_array" style="min-width: 30%">
+            </select>
+            <!--<i class="icon ion-ios-search placeholder-icon"></i>-->
+            <input type="text"  placeholder="输入搜索内容" ng-change="searchRecommand()" ng-model="query.content" style="background-color: #ffffff">
+        </div>
+    </ion-nav-title>
+    <!--当存在未读信息时图标转换为ion-email-unread  此功能用于显示一些系统通知，活动推广，交易通知等等-->
+    <ion-nav-buttons side="right">
+        <!--<a class="button button-small button-light">搜索</a>-->
+        <a class="button button-stable button_search" ng-click="onClickSearch()">搜索</a>
+        <!--<a class="button button-clear">搜索</a>-->
+    </ion-nav-buttons>
+
+    <ion-nav-buttons side="left">
+        <a class="button button-clear icon ion-ios-arrow-back" ng-click="$root.goBack()"></a>
+    </ion-nav-buttons>
+
+    <div class="bar bar-subheader">
+        <!-- 目前ionic貌似只支持单个item-select的情况，该实现强行一个item两个select，但是两个select中第一个总是被点中，第二个几乎无法点中，且选中项无法变换，因为该方案一定要改-->
+        <div class="item item-input item-select no_border" style="padding-top: 0; padding-bottom: 0">
+            <div class="input-label positive text_bold" style="font-size: 14px;">
+                搜索结果
+            </div>
+            <select class="positive text_bold no_border light-bg" style="padding-right: 30px;" ng-model="query.sort_type"
+                    ng-options="type.id as type.name for type in sort_type_array" ng-change="onSortTypeChange()">
+            </select>
+        </div>
+    </div>
+
+    <ion-content class="padding has-subheader" overflow-scroll="false">
+        <div  class="list">
+            <ion-item class="item-thumbnail-left no_border" ng-repeat="store in store_list"  ng-click="onChooseItem('store',$index)">
+                <img ng-src="{{store.thumbnail_name}}">
+                <div class="ellipsis commodity">
+                    <div>
+                        <p>
+                            <i  class="item-title">{{store.store_name}}</i>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tip">
+                    商铺认证
+                    <i class="icon ion-checkmark-circled positive"></i>
+                </div>
+                <div class="tip" >
+                    <i>{{store.store_visit_num}}次浏览</i>
+                    <i class="item-time">{{store.create_time}}</i>
+                </div>
+            </ion-item>
+
+            <a class="item item-thumbnail-left no_border" ng-repeat="trade in trade_list"  ng-click="onChooseItem('trade',$index)">
+                <!--<a class="item no_border" ng-repeat="trade in trade_list"  ui-sref="commodity-detail({commodityId: 0})">-->
+                <img ng-src="{{trade.thumbnail_name}}" ng-if="trade.thumbnail_name!=null">
+                <img ng-src="img/logo.png" ng-if="trade.thumbnail_name==null">
+                <div class="ellipsis commodity">
+                    <div>
+                        <p>
+                            <i class="positive trade-type" ng-if="trade.trade_type == 0">【出售】</i>
+                            <i class="energized trade-type" ng-if="trade.trade_type == 1">【收购】</i>
+                            <i  class="item-title">{{trade.trade_title}}</i>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tip" ng-if="trade.store_id!=null">
+                    商铺认证
+                    <i class="icon ion-checkmark-circled positive"></i>
+
+                </div>
+
+                <div class="tip" ng-if="trade.store_id==null">
+                    个人认证
+                    <i class="icon ion-checkmark-circled positive"></i>
+
+                </div>
+
+                <div class="tip" >
+                    {{trade.trade_visit_num}}次浏览
+                    <i class="item-time">{{trade.create_time}}</i>
+                </div>
+
+            </a>
+
+            <ion-item class="no_border"  style="padding-bottom: 8px;" ng-if="gotSearchResult && !noMoreData" ng-click="getMoreSearchResult()">
+                <div class="commodity-parameter" style="text-align: center">
+                    查看更多<br>
+                    <i class="icon ion-android-arrow-dropdown"></i>
+                </div>
+            </ion-item>
+
+            <ion-item ng-if="corrected" class="tip no_border" style="font-size: 14px;">
+                您是不是要找:
+                <a ng-repeat="word in corrected" ng-click="onClickCorrected($index)"><br>{{word}}</a>
+            </ion-item>
+
+            <ion-item class="no_border"  style="padding-bottom: 8px;" ng-if="noMoreData">
+                <div class="commodity-parameter" style="text-align: center">
+                    暂无更多搜索结果
+                </div>
+            </ion-item>
+
+
+            <ion-item class="no_border"  style="padding-bottom: 8px; padding-top: 20%" ng-if="noDataMatch">
+                <div class="commodity-parameter" style="text-align: center">
+                    没有找到和“{{lastSearch.content}}”相关的内容
+                </div>
+            </ion-item>
+
+        </div>
+
+
+
+
+
+    </ion-content>
+</ion-view>

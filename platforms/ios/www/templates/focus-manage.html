@@ -1,0 +1,114 @@
+<ion-view view-title="我的收藏">
+    <ion-nav-buttons side="left">
+        <!--如何在tempalte中使用rootScope的经典例子-->
+        <a class="button button-clear icon ion-ios-arrow-back" ng-click="$root.goBack()"></a>
+    </ion-nav-buttons>
+
+    <ion-nav-buttons side="right">
+        <a class="button button-clear" ng-click="clearData()">清空</a>
+    </ion-nav-buttons>
+    <ion-content overflow-scroll="false">
+
+        <ion-refresher
+                pulling-text="下拉获取最新数据..."
+                on-refresh="getLatestData()"
+                spinner="android">
+        </ion-refresher>
+
+        <div style="text-align: center" ng-if="isEmpty">
+            <div style="margin: 80px 0 30px 0">
+                <img ng-src="img/no_focus2.png" width="40%">
+            </div>
+
+            您暂时还没有收藏数据~~
+        </div>
+
+
+
+        <div class="tip" ng-if="error_occur" style="text-align: center; padding-top: 30%;">
+            数据请求发生错误，请检查网络状态后重试
+            <div style="text-align: center">
+                <button class="button-small button-stable" style="margin-right: 20px;" ng-click="onRetry()">
+                    <B>重试</B>
+                </button>
+            </div>
+        </div>
+
+
+        <ion-list class="card no_left_right_margin" ng-if="!(focus_store_ids==null || focus_store_ids.length==0) && !error_occur">
+            <div class="item item-divider positive">
+                <i class="positive text_bold">商铺收藏</i>
+                <i class="tip">(向左滑动可取消收藏)</i>
+            </div>
+
+            <ion-item class="item-thumbnail-left no_border" ng-repeat="store in store_list"  ng-click="onChooseItem('store',$index)">
+                <img ng-src="{{store.thumbnail_name}}">
+                <div class="ellipsis commodity">
+                    <div>
+                        <p>
+                            <i  class="item-title">{{store.store_name}}</i>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tip">
+                    商铺认证
+                    <i class="icon ion-checkmark-circled positive"></i>
+                </div>
+                <div class="tip" >
+                    <i>{{store.store_visit_num}}次浏览</i>
+                    <i class="item-time">{{store.create_time}}</i>
+                </div>
+
+                <ion-option-button class="button-assertive" ng-click="deleteFocus('store',$index)">
+                    删除
+                </ion-option-button>
+            </ion-item>
+
+        </ion-list>
+
+
+        <ion-list class="card no_left_right_margin" ng-if="!(focus_trade_ids==null || focus_trade_ids.length==0) && !error_occur">
+            <div class="item item-divider positive">
+                <i class="positive text_bold">挂单收藏</i>
+                <i class="tip">(向左滑动可取消收藏)</i>
+            </div>
+            <ion-item class="item-thumbnail-left no_border" ng-repeat="trade in trade_list"  ng-click="onChooseItem('trade',$index)">
+                <!--<a class="item no_border" ng-repeat="trade in trade_list"  ui-sref="commodity-detail({commodityId: 0})">-->
+                <img ng-src="{{trade.thumbnail_name}}" ng-if="trade.thumbnail_name!=null">
+                <img ng-src="img/logo.png" ng-if="trade.thumbnail_name==null">
+                <div class="ellipsis commodity">
+                    <div>
+                        <p>
+                            <i class="positive trade-type" ng-if="trade.trade_type == 0">【出售】</i>
+                            <i class="energized trade-type" ng-if="trade.trade_type == 1">【收购】</i>
+                            <i  class="item-title">{{trade.trade_title}}</i>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tip" ng-if="trade.store_id!=null">
+                    商铺认证
+                    <i class="icon ion-checkmark-circled positive"></i>
+
+                </div>
+
+                <div class="tip" ng-if="trade.store_id==null">
+                    个人认证
+                    <i class="icon ion-checkmark-circled positive"></i>
+
+                </div>
+
+                <div class="tip" >
+                    {{trade.trade_visit_num}}次浏览
+                    <i class="item-time">{{trade.create_time}}</i>
+                </div>
+
+                <ion-option-button class="button-assertive" ng-click="deleteFocus('trade',$index)">
+                    删除
+                </ion-option-button>
+            </ion-item>
+
+        </ion-list>
+    </ion-content>
+</ion-view>

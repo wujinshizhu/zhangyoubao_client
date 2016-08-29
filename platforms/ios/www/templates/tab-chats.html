@@ -1,0 +1,79 @@
+<!-- 该部分用于显示聊天记录，
+待商榷： 对于新消息是服务器及时推送过来，还是客户端固定时间间隔进行消息的获取，应该是前者，那么客户端的通信处理该怎么处理？目前暂无全局的数据接收处理的程序。
+-->
+<ion-view view-title="<B>聊天记录</B>">
+    <ion-nav-buttons side="right">
+        <span class="button button-small" ng-click="onEdit()">
+            <i ng-if="!edit_delete">编辑</i>
+            <i ng-if="edit_delete">完成</i>
+        </span>
+    </ion-nav-buttons>
+
+  <ion-content overflow-scroll="false">
+
+
+      <ion-item style="padding: 8px 0;" ng-if="!isConnected">
+          <div  style="text-align: center">
+              <i class="icon ion-alert-circled icon-accessory energized" style="font-size: 24px;"></i>
+              <i style="font-size: 14px;color: #64252F; margin-left: 10px; position: relative; bottom: 3px">网络异常，暂时无法连接到服务器</i>
+          </div>
+      </ion-item>
+
+
+      <div style="text-align: center" ng-if="isChatEmpty()">
+          <div style="margin: 30px 0">
+              <img ng-src="img/talk_2.png" width="50%">
+          </div>
+
+          您暂时还没有私信记录T.T
+      </div>
+
+    <ion-list>
+
+
+        <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="user_id in chatOrderList" type="item-text-wrap" ng-if="!isChatEmpty()" ng-click="goChatDetail(user_id)">
+            <img ng-src="{{chatsDic[user_id].userInfo.avatars_name}}" ng-if="user_id != $root.SYSTEM_MSG_ID">
+            <img ng-src="img/system_msg1.png" ng-if="user_id == $root.SYSTEM_MSG_ID">
+            <!-- 系统的各方面消息采用蓝色字体-->
+            <!--<h2>{{chatsDic[user_id].userInfo.name}}</h2>-->
+            <div style="font-size: 16px;" ng-if="user_id != $root.SYSTEM_MSG_ID">
+
+                <i>{{chatsDic[user_id].userInfo.userNameRespect}}</i>
+
+                <!-- 普通用户使用tip字体，高级会员使用蓝色字体,至尊会员使用紫色字体-->
+                <i class="positive" style="font-size:12px;font-weight: bold;" ng-if="chatsDic[user_id].userInfo.level==0">普通用户</i>
+                <i class="energized" style="font-size:12px;font-weight: bold;" ng-if="chatsDic[user_id].userInfo.level==1">高级会员</i>
+                <i class="royal" style="font-size:12px;font-weight: bold;" ng-if="chatsDic[user_id].userInfo.level==2">实体店主</i>
+            </div>
+
+            <div style="font-size: 16px;" class="positive" ng-if="user_id == $root.SYSTEM_MSG_ID">
+
+              <i>系统消息</i>
+
+            </div>
+
+            <i class="tip" ng-if="chatsDic[user_id].chatRecords[chatsDic[user_id].chatRecords.length-1].type==$root.MSG_TYPE.TEXT || user_id == $root.SYSTEM_MSG_ID">
+                {{chatsDic[user_id].chatRecords[chatsDic[user_id].chatRecords.length-1].content}}
+            </i>
+
+            <i class="tip" ng-if="chatsDic[user_id].chatRecords[chatsDic[user_id].chatRecords.length-1].type==$root.MSG_TYPE.IMG">
+                [图片]
+            </i>
+
+            <i class="icon ion-chevron-right icon-accessory">
+                <span class="badge badge-assertive" style="top:25px;" ng-if="chatsDic[user_id].unReadNum!=0">{{chatsDic[user_id].unReadNum}}</span>
+            </i>
+
+            <ion-option-button class="button-assertive" ng-click="removeChat(user_id)">
+            删除
+            </ion-option-button>
+
+            <ion-delete-button class="ion-minus-circled" ng-click="removeChat(user_id)">
+            </ion-delete-button>
+        </ion-item>
+
+
+
+    </ion-list>
+  </ion-content>
+</ion-view>

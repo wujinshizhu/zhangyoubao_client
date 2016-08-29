@@ -1,0 +1,33 @@
+
+<a class="item item-thumbnail-left no_border" ng-repeat="trade in trade_list"  ng-click="onChooseItem($index)">
+    <!--<a class="item no_border" ng-repeat="trade in trade_list"  ui-sref="commodity-detail({commodityId: 0})">-->
+    <img ng-src="{{trade.thumbnail_name}}" ng-if="trade.thumbnail_name!=null">
+    <img ng-src="img/logo.png" ng-if="trade.thumbnail_name==null">
+    <div class="ellipsis commodity">
+        <div>
+            <p>
+                <i class="positive trade-type" ng-if="trade.trade_type == 0">【出售】</i>
+                <i class="energized trade-type" ng-if="trade.trade_type == 1">【收购】</i>
+                <i  class="item-title">{{trade.trade_title}}</i>
+            </p>
+        </div>
+    </div>
+
+    <div class="tip" ng-if="trade.store_id!=null">
+        商铺认证
+        <i class="icon ion-checkmark-circled positive"></i>
+
+    </div>
+
+    <div class="tip" ng-if="trade.store_id==null">
+        个人认证
+        <i class="icon ion-checkmark-circled positive"></i>
+
+    </div>
+
+    <div class="tip" >
+        {{trade.trade_visit_num}}次浏览
+        <i class="item-time">{{trade.create_time}}</i>
+    </div>
+
+</a>
