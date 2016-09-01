@@ -86,16 +86,16 @@
     </div>
 
     <!-- 该项信息仅实体店主拥有-->
-    <div class="card" ng-if="storeInfo">
+    <div class="card" ng-if="applyStoreInfo">
       <label class="item item-divider positive text_bold">
-        实体店信息
+        实体店信息(申请人)
       </label>
-      <ion-item class="item-thumbnail-left no_border" ng-click="onClickStore()">
-        <img ng-src="{{storeInfo.thumbnail_name}}">
+      <ion-item class="item-thumbnail-left no_border" ng-click="onClickStore('apply')">
+        <img ng-src="{{applyStoreInfo.thumbnail_name}}">
         <div class="ellipsis commodity">
           <div>
             <p>
-              <i  class="item-title">{{storeInfo.store_name}}</i>
+              <i  class="item-title">{{applyStoreInfo.store_name}}</i>
             </p>
           </div>
         </div>
@@ -105,18 +105,13 @@
           <i class="icon ion-checkmark-circled positive"></i>
         </div>
         <div class="tip" >
-          <i>{{storeInfo.store_visit_num}}次浏览</i>
-          <i class="item-time">{{storeInfo.create_time}}</i>
+          <i>{{applyStoreInfo.store_visit_num}}次浏览</i>
+          <i class="item-time">{{applyStoreInfo.create_time}}</i>
         </div>
       </ion-item>
-      <!--<label class="item item-input" >-->
-        <!--<div class="input-label">-->
-          <!--店铺名称:-->
-        <!--</div>-->
-        <!--<i>{{storeInfo.store_name}}</i>-->
-      <!--</label>-->
     </div>
-    <div class="list-inset tip">
+
+    <div class="list-inset tip" ng-if="curr_status<=2">
       为了提高交易申请的有效性,请详细填写"申请描述",包括商品的名称/类型/品相/交易价格/交易数量/交易方式等
     </div>
     <div class="card">
@@ -164,8 +159,6 @@
       <label class="item item-input no_border_top" ng-if="curr_status!=1">
         <p style="white-space: normal">{{applyInfo.apply_description}}</p>
       </label>
-
-
     </div>
 
     <!--<div class="list-inset" ng-if="curr_status==1">-->
@@ -197,6 +190,70 @@
         <B>确认拒绝交易</B>
       </button>
 
+    </div>
+
+    <div class="card" ng-if="curr_status==3">
+      <label class="item item-divider positive text_bold">
+        接收人信息
+        <span ng-if="tradeApplyInfo.trade_type == 0">(卖方)</span>
+        <span ng-if="tradeApplyInfo.trade_type == 1">(买方)</span>
+      </label>
+
+      <label class="item item-input" >
+        <div class="input-label">
+          姓名:
+        </div>
+        <i>{{receiveUserInfo.name}}</i>
+      </label>
+
+      <label class="item item-input" >
+        <div class="input-label">
+          性别:
+        </div>
+        <i>{{receiveUserInfo.sex}}</i>
+      </label>
+
+      <!--测试一下长地址换行的问题,不行就改为area -->
+      <label class="item item-input" >
+        <div class="input-label">
+          地址:
+        </div>
+        <i style="white-space: normal; width: 60%;">{{receiveUserInfo.address}}</i>
+        <!--<textarea type ="text" ng-model="applyUserInfo.address" readonly="readonly"></textarea>-->
+      </label>
+
+      <label class="item item-input" >
+        <div class="input-label">
+          身份证:
+        </div>
+        <i>{{receiveUserInfo.id_num}}</i>
+      </label>
+    </div>
+
+    <!-- 该项信息仅实体店主拥有-->
+    <div class="card" ng-if="receiveStoreInfo && curr_status==3">
+      <label class="item item-divider positive text_bold">
+        实体店信息(接收人)
+      </label>
+      <ion-item class="item-thumbnail-left no_border" ng-click="onClickStore('receive')">
+        <img ng-src="{{receiveStoreInfo.thumbnail_name}}">
+        <div class="ellipsis commodity">
+          <div>
+            <p>
+              <i  class="item-title">{{receiveStoreInfo.store_name}}</i>
+            </p>
+          </div>
+        </div>
+
+        <div class="tip">
+          商铺认证
+          <i class="icon ion-checkmark-circled positive"></i>
+        </div>
+        <div class="tip" >
+          <i>{{receiveStoreInfo.store_visit_num}}次浏览</i>
+          <i class="item-time">{{receiveStoreInfo.create_time}}</i>
+        </div>
+      </ion-item>
     </div>
 
 

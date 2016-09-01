@@ -63,13 +63,13 @@ rootService.factory('ImgPathService', function($rootScope) {
         data.thumbnail_height=params[5];
     };
     //当data中同时包含user和store信息的时候
-    var genUserAndStoreImgUrl = function(data){
-        if(data.userInfo) {
-            genUserAvatarsUrl(data.userInfo);
+    var genUserAndStoreImgUrl = function(data, userKey, storeKey){
+        if(data[userKey]) {
+            genUserAvatarsUrl(data[userKey]);
         }
-        if(data.storeInfo!=null)
+        if(data[storeKey]!=null)
         {
-            generateStoreImgUrl(data.storeInfo);
+            generateStoreImgUrl(data[storeKey]);
         }
     };
     //处理用户头像

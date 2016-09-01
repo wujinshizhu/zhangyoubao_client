@@ -31,7 +31,7 @@ rootModule.controller('TradeDetailCtrl',function($scope,$stateParams,$rootScope,
                     case 200:
                         console.log(data);
                         angular.fromJson(data);
-                        ImgPathService.genUserAndStoreImgUrl(data);
+                        ImgPathService.genUserAndStoreImgUrl(data, 'userInfo', 'storeInfo');
                         $scope.getting_data=false;
                         UserNameService.setUserNameRespect(data.userInfo);
                         $scope.userInfo=data.userInfo;

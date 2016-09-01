@@ -35,7 +35,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
             console.log($scope.idNumHidden);
         }
         else{
-          $scope.idNumHidden= $scope.userInfo.id_num;
+          $scope.idNumHidden= $scope.applyUserInfo.id_num;
         }
     }
 
@@ -77,13 +77,20 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
 
               console.log($scope.applyInfo);
               // 每次获取用户信息时,记得处理用户的尊称
-              UserNameService.setUserNameRespect(data.userInfo);
-              ImgPathService.genUserAndStoreImgUrl(data);
-              $scope.applyUserInfo = data.userInfo;
+              UserNameService.setUserNameRespect(data.applyUserInfo);
+              ImgPathService.genUserAndStoreImgUrl(data, 'applyUserInfo', 'applyStoreInfo');
+              $scope.applyUserInfo = data.applyUserInfo;
+              $scope.applyStoreInfo = data.applyStoreInfo;
+              //  对于已经确认的交易,可以获取到接收方的数据
+              if(data.receiveUserInfo){
+                  UserNameService.setUserNameRespect(data.receiveUserInfo);
+                  ImgPathService.genUserAndStoreImgUrl(data, 'receiveUserInfo', 'receiveStoreInfo');
+                  $scope.receiveUserInfo = data.receiveUserInfo;
+                  $scope.receiveStoreInfo = data.receiveStoreInfo;
+              }
               hidePartInfo();
               $scope.tradeApplyInfo = data.tradeInfo;
               ImgPathService.generateTradeImgUrl($scope.tradeApplyInfo);
-              $scope.storeInfo = data.storeInfo;
               break;
           }
           $ionicLoading.hide();
@@ -124,7 +131,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
 
 
     $scope.applyUserInfo = null;
-    $scope.storeInfo = null;
+    $scope.applyStoreInfo = null;
 
     // 提取当前用户的个人信息并填充进页面
     switch($scope.curr_status){
@@ -132,7 +139,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
             $scope.title = '<B>交易申请(申请中)</B>';
             $scope.applyUserInfo = $rootScope.userInfo;
             if($scope.applyUserInfo.level == $rootScope.USER_LEVEL.STORE_OWNER){
-              $scope.storeInfo = $rootScope.storeInfo
+              $scope.applyStoreInfo = $rootScope.storeInfo
             }
             $scope.tradeApplyInfo = $rootScope.tradeApplyInfo;
             if(!$scope.tradeApplyInfo) {
@@ -237,7 +244,7 @@ rootModule.controller('TransactionApplyCtrl', function($scope, $stateParams, $st
     };
 
     $scope.onClickStore=function(){
-      $rootScope.choosenStoreInfo=$scope.storeInfo;
+      $rootScope.choosenStoreInfo=$scope.applyStoreInfo;
       $state.go('store-detail');
     };
 
