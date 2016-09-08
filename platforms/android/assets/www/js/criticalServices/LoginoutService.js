@@ -286,7 +286,7 @@ rootService.factory('LoginoutService',function($ionicPopup,$cordovaToast,$http,L
         console.log(data);
         //这边userInfo中会存在从服务器端登录时得到的所有信息，包括银行卡，店铺信息，但是量不大，应该不打紧
         //替换图像文件
-        ImgPathService.genUserAndStoreImgUrl(data);
+        ImgPathService.genUserAndStoreImgUrl(data, 'userInfo', 'storeInfo');
         //服务器端已经自动登录，所以这边只要设置本地的登录状态
         $rootScope.isLogin=true;
         $cordovaToast.showShortCenter("登录成功");

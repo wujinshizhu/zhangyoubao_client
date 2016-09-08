@@ -280,8 +280,9 @@ rootModule.factory('ChatCacheService',function(LocalStorage,$rootScope,$ionicHis
     /**
      * 获取发送过来的消息的处理
      * @param obj
+     * @param save  一个bool,用于表示此次操作后是否需要保存当前聊天记录
      */
-    function recevieMessage(obj)
+    function recevieMessage(obj, save)
     {
         if(obj.target_id == $rootScope.userInfo.user_id)
         {
@@ -290,13 +291,15 @@ rootModule.factory('ChatCacheService',function(LocalStorage,$rootScope,$ionicHis
                 //添加系统消息
                 addSystemMsg(obj);
             }
+
             else {
                 isChatTargetHasExistOnReceive(obj);
                 //添加聊天记录
                 addReceivedChatRecord(obj.src_id,obj);
             }
-          //保存聊天记录
-          saveChatDic($rootScope.userInfo.user_id);
+            //保存聊天记录
+            if(save)
+                saveChatDic($rootScope.userInfo.user_id);
         }
         else
         {
@@ -332,16 +335,7 @@ rootModule.factory('ChatCacheService',function(LocalStorage,$rootScope,$ionicHis
     function receviceMsgArray(msgs){
         for(var i=0;i<msgs.length;i++)
         {
-            if(msgs[i].target_id == $rootScope.userInfo.user_id)
-            {
-                isChatTargetHasExistOnReceive(msgs[i]);
-                //添加聊天记录
-                addReceivedChatRecord(msgs[i].src_id,msgs[i]);
-            }
-            else
-            {
-                console.log("接受到非本id为目标的信息");
-            }
+            recevieMessage(msgs[i], false);
         }
 
         //保存聊天记录

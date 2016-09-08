@@ -112,7 +112,7 @@ rootService.factory('SocketService',function(socketFactory,$rootScope,ChatCacheS
             }
             console.log('接收到数据');
             console.log(msg);
-            ChatCacheService.recevieMessage(msg);
+            ChatCacheService.recevieMessage(msg, true);
             //接收到消息时振动500ms
             $cordovaNativeAudio.play('new_message');
             $cordovaVibration.vibrate(500);
